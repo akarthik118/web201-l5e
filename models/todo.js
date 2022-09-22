@@ -1,6 +1,9 @@
 // models/todo.js
 "use strict";
 const { Model } = require("sequelize");
+
+var Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     /**
@@ -17,39 +20,39 @@ module.exports = (sequelize, DataTypes) => {
       console.log("My Todo list \n");
 
       console.log("Overdue");
-      this.overdue().map(
-        (task) =>
+      const over = await this.overdue();
+      over.map((task) =>
+        console.log(
           `${task.id}. [${task.completed ? "x" : " "}] ${task.title} ${
-            task.dueDate == formattedDate(new Date()) ? "" : task.dueDate
-          }\n`
+            task.dueDate
+          }`
+        )
       );
-      console.log(over);
       console.log("\n");
 
       console.log("Due Today");
-      this.dueToday().map(
-        (task) =>
-          `${task.id}. [${task.completed ? "x" : " "}] ${task.title} ${
-            task.dueDate == formattedDate(new Date()) ? "" : task.dueDate
-          }\n`
+      const today = await this.dueToday();
+      today.map((task) =>
+        console.log(`${task.id}. [${task.completed ? "x" : " "}] ${task.title}`)
       );
-      console.log(today);
       console.log("\n");
 
       console.log("Due Later");
-      this.dueLater().map(
-        (task) =>
+      const later = await this.dueLater();
+      later.map((task) =>
+        console.log(
           `${task.id}. [${task.completed ? "x" : " "}] ${task.title} ${
-            task.dueDate == formattedDate(new Date()) ? "" : task.dueDate
-          }\n`
+            task.dueDate
+          }`
+        )
       );
-      console.log(later);
     }
 
     static async overdue() {
       const d = new Date();
       const task = await Todo.findAll({
         where: { dueDate: { [Op.lte]: d.toLocaleDateString("en-CA") } },
+        order: [["id", "ASC"]],
       });
       return task;
     }
@@ -58,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
       const d = new Date();
       const task = await Todo.findAll({
         where: { dueDate: { [Op.eq]: d.toLocaleDateString("en-CA") } },
+        order: [["id", "ASC"]],
       });
       return task;
     }
@@ -66,6 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       const d = new Date();
       const task = await Todo.findAll({
         where: { dueDate: { [Op.gte]: d.toLocaleDateString("en-CA") } },
+        order: [["id", "ASC"]],
       });
       return task;
     }
