@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     static async overdue() {
       const d = new Date();
       const task = await Todo.findAll({
-        where: { dueDate: { [Op.lte]: d.toLocaleDateString("en-CA") } },
+        where: { dueDate: { [Op.lt]: d.toLocaleDateString("en-CA") } },
         order: [["id", "ASC"]],
       });
       return task;
@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     static async dueLater() {
       const d = new Date();
       const task = await Todo.findAll({
-        where: { dueDate: { [Op.gte]: d.toLocaleDateString("en-CA") } },
+        where: { dueDate: { [Op.gt]: d.toLocaleDateString("en-CA") } },
         order: [["id", "ASC"]],
       });
       return task;
