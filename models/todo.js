@@ -21,31 +21,21 @@ module.exports = (sequelize, DataTypes) => {
 
       console.log("Overdue");
       const over = await this.overdue();
-      over.map((task) =>
-        console.log(
-          `${task.id}. [${task.completed ? "x" : " "}] ${task.title} ${
-            task.dueDate
-          }`
-        )
-      );
+      over.map((task) => {
+        console.log(task.displayableString());
+      });
       console.log("\n");
 
       console.log("Due Today");
       const today = await this.dueToday();
-      today.map((task) =>
-        console.log(`${task.id}. [${task.completed ? "x" : " "}] ${task.title}`)
-      );
+      today.map((task) => {
+        console.log(task.displayableString());
+      });
       console.log("\n");
 
       console.log("Due Later");
       const later = await this.dueLater();
-      later.map((task) =>
-        console.log(
-          `${task.id}. [${task.completed ? "x" : " "}] ${task.title} ${
-            task.dueDate
-          }`
-        )
-      );
+      later.map((task) => console.log(task.displayableString()));
     }
 
     static async overdue() {
@@ -81,7 +71,11 @@ module.exports = (sequelize, DataTypes) => {
 
     displayableString() {
       let checkbox = this.completed ? "[x]" : "[ ]";
-      return `${this.id}. ${checkbox} ${this.title} ${this.dueDate}`;
+      let date =
+        this.dueDate === new Date().toLocaleDateString("en-CA")
+          ? ""
+          : ` ${this.dueDate}`;
+      return `${this.id}. ${checkbox} ${this.title} ${date}`;
     }
   }
   Todo.init(
