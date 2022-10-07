@@ -7,6 +7,7 @@ const createTodo = async (params) => {
     await db.Todo.addTask(params);
   } catch (error) {
     console.error(error);
+    
   }
 };
 
